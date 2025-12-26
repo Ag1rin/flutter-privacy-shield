@@ -11,20 +11,6 @@
 
 </div>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
----
-
-<div align="center">
-
-</div>
-
----
->>>>>>> bcf2d1be5706bbcee9b170d0107900dcf194f858
-=======
->>>>>>> 8c07000e0ad598f336091cf3485699e89b0535ff
-
 ## Features
 
 - **Prevent Screenshots & Recordings** – Black screen on Android, protected on iOS (`no_screenshot`)
