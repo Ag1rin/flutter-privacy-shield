@@ -1,6 +1,6 @@
 <div align="center">
 
-# Flutter Privacy Shield 🚀
+# Flutter App Shield 🚀
 
 **A powerful & easy-to-use Flutter package** that protects your app's sensitive content from screenshots, screen recordings, and exposure in the app switcher.
 
@@ -51,7 +51,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_privacy_shield: ^0.1.0
+  flutter_app_shield: ^0.1.0
 ```
 
 Then run:
@@ -77,7 +77,7 @@ Just wrap your app (or any widget) with `PrivacyShield`:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:flutter_privacy_shield/flutter_privacy_shield.dart';
+import 'package:flutter_app_shield/flutter_app_shield.dart';
 
 void main() {
   runApp(const MyApp());
