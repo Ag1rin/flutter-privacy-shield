@@ -1,3 +1,17 @@
+## [0.1.4] - 2025-12-26
+
+### Changed
+- Updated `local_auth` dependency to support version 3.0.0+
+- Refactored authentication logic to match the latest `local_auth` API changes:
+  - Removed deprecated `options: AuthenticateOptions(...)`
+  - Passed `stickyAuth` and `biometricOnly` directly as named parameters to `authenticate()`
+
+### Fixed
+- Resolved compilation errors caused by breaking changes in `local_auth` 3.0.0
+- Ensured compatibility with the most recent stable version of `local_auth`
+
+This update maintains full functionality while keeping the package up-to-date with dependency changes.
+
 ## [0.1.3] 
 
 ### Added
