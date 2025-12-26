@@ -11,6 +11,16 @@
 
 </div>
 
+<<<<<<< HEAD
+=======
+---
+
+<div align="center">
+
+</div>
+
+---
+>>>>>>> bcf2d1be5706bbcee9b170d0107900dcf194f858
 
 ## Features
 
