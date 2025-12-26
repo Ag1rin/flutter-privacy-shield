@@ -1,4 +1,4 @@
-## [0.1.4] - 2025-12-26
+## [0.1.4] 
 
 ### Changed
 - Updated `local_auth` dependency to support version 3.0.0+
