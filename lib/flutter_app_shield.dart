@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:secure_application/secure_application.dart';
@@ -6,53 +7,103 @@ import 'package:no_screenshot/no_screenshot.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
 import 'package:local_auth/local_auth.dart';
 
-/// A comprehensive privacy and security widget for Flutter apps.
-/// Prevents screenshots, blurs the app in background, requires authentication
-/// on resume (if enabled), and optionally blocks rooted/jailbroken devices.
+/// A powerful and easy-to-use security wrapper for Flutter apps.
 ///
-/// Features:
-/// - Prevent screenshots and screen recording.
-/// - Blur the app when in background.
-/// - Require biometric/PIN authentication on resume.
-/// - Block app on rooted/jailbroken devices.
-/// - Customizable max authentication attempts before showing error or exiting.
-class PrivacyShield extends StatefulWidget {
-  /// The main app widget to protect.
+/// [AppShield] protects your app from screenshots, screen recordings, exposure
+/// in the app switcher, and unauthorized access on compromised devices.
+///
+/// Simply wrap your main app widget (or any part of your UI) with [AppShield]
+/// to enable comprehensive privacy and security features.
+///
+/// ### Key Features
+/// - Prevents screenshots and screen recordings
+/// - Blurs app preview when in background (app switcher)
+/// - Optional biometric/PIN authentication when resuming the app
+/// - Optional block on rooted or jailbroken devices
+/// - Customizable lock screens and error handling
+///
+/// ### Example
+/// ```dart
+/// void main() {
+///   runApp(
+///     AppShield(
+///       preventScreenshot: true,
+///       requireAuthOnResume: true,
+///       blockOnJailbreak: true,
+///       child: const MyApp(),
+///     ),
+///   );
+/// }
+/// ```
+///
+/// See the package README and example/ folder for full usage and customization.
+class AppShield extends StatefulWidget {
+  /// The main widget to protect with security features.
+  ///
+  /// This is typically your entire [MaterialApp] or [CupertinoApp].
   final Widget child;
 
-  /// Amount of blur applied when app is in background.
+  /// Amount of blur applied when the app is in the background.
+  ///
+  /// Higher values create stronger blur. Default: 20.0
   final double blurAmount;
 
-  /// Opacity of the blur overlay.
+  /// Opacity of the blur overlay in the app switcher.
+  ///
+  /// Range: 0.0 (transparent) to 1.0 (opaque). Default: 0.8
   final double opacity;
 
-  /// Prevent screenshots and screen recording (default: true).
+  /// Whether to prevent screenshots and screen recordings.
+  ///
+  /// Default: true
   final bool preventScreenshot;
 
-  /// Require biometric/PIN authentication when returning from background.
+  /// Whether to require biometric or PIN authentication when the app resumes
+  /// from background.
+  ///
+  /// Default: false
   final bool requireAuthOnResume;
 
-  /// Block the app if device is rooted or jailbroken.
+  /// Whether to block the app entirely if the device is rooted (Android) or
+  /// jailbroken (iOS).
+  ///
+  /// Default: false
   final bool blockOnJailbreak;
 
-  /// Maximum authentication attempts before showing error (default: 3).
-  /// If exceeded, shows a message and optionally exits the app.
+  /// Maximum number of failed authentication attempts before showing an error.
+  ///
+  /// Default: 3
   final int maxAuthAttempts;
 
-  /// Custom builder for the compromised device warning screen.
+  /// Custom widget to display when the device is detected as compromised
+  /// (rooted/jailbroken) and [blockOnJailbreak] is true.
+  ///
+  /// If null, a default warning screen is shown.
   final Widget? compromisedDeviceBuilder;
 
-  /// Custom builder for the locked screen.
-  final Widget Function(BuildContext, SecureApplicationController?)?
+  /// Custom builder for the locked screen shown when authentication is required.
+  ///
+  /// If null, a default lock screen with icon and button is provided.
+  final Widget Function(
+    BuildContext context,
+    SecureApplicationController? controller,
+  )?
   lockedBuilder;
 
-  /// Whether to exit the app after max auth attempts (default: false).
+  /// Whether to force-close the app after exceeding [maxAuthAttempts].
+  ///
+  /// Only works on native platforms (not web). Default: false
   final bool exitOnMaxAttempts;
 
-  /// Custom message for max attempts exceeded.
+  /// Message to display when maximum authentication attempts are exceeded.
+  ///
+  /// Default: 'Too many failed attempts. Please try again later.'
   final String maxAttemptsMessage;
 
-  const PrivacyShield({
+  /// Creates an [AppShield] security wrapper.
+  ///
+  /// Use the various parameters to enable and configure security features.
+  const AppShield({
     super.key,
     required this.child,
     this.blurAmount = 20.0,
@@ -69,14 +120,16 @@ class PrivacyShield extends StatefulWidget {
   });
 
   @override
-  State<PrivacyShield> createState() => _PrivacyShieldState();
+  State<AppShield> createState() => _AppShieldState();
 }
 
-class _PrivacyShieldState extends State<PrivacyShield> {
+class _AppShieldState extends State<AppShield> {
   final _noScreenshot = NoScreenshot.instance;
   final _localAuth = LocalAuthentication();
+
   bool _isDeviceCompromised = false;
   late Future<void> _securityFuture;
+
   int _authAttempts = 0;
   bool _authFailed = false;
 
@@ -86,13 +139,12 @@ class _PrivacyShieldState extends State<PrivacyShield> {
     _securityFuture = _setupSecurity();
   }
 
+  /// Initializes security features: screenshot prevention and root/jailbreak detection.
   Future<void> _setupSecurity() async {
-    // Prevent screenshots and screen recording
     if (widget.preventScreenshot) {
       await _noScreenshot.screenshotOff();
     }
 
-    // Detect rooted/jailbroken device
     if (widget.blockOnJailbreak) {
       final bool jailbroken = await FlutterJailbreakDetection.jailbroken;
       bool developerMode = false;
@@ -117,7 +169,6 @@ class _PrivacyShieldState extends State<PrivacyShield> {
           );
         }
 
-        // If device is compromised and blocking is enabled, show warning
         if (_isDeviceCompromised) {
           return widget.compromisedDeviceBuilder ??
               Scaffold(
@@ -132,7 +183,6 @@ class _PrivacyShieldState extends State<PrivacyShield> {
               );
         }
 
-        // If auth failed too many times
         if (_authFailed) {
           return Scaffold(
             backgroundColor: Colors.black,
@@ -147,7 +197,6 @@ class _PrivacyShieldState extends State<PrivacyShield> {
         }
 
         return SecureApplication(
-          // Require authentication on resume if enabled
           onNeedUnlock: widget.requireAuthOnResume
               ? (controller) async {
                   try {
@@ -160,49 +209,30 @@ class _PrivacyShieldState extends State<PrivacyShield> {
                     );
 
                     if (authenticated) {
-                      _authAttempts = 0; // Reset attempts
+                      _authAttempts = 0;
                       controller?.unlock();
                       return SecureApplicationAuthenticationStatus.SUCCESS;
                     } else {
                       _authAttempts++;
                       if (_authAttempts >= widget.maxAuthAttempts) {
-                        if (mounted) {
-                          setState(() {
-                            _authFailed = true;
-                          });
-                        }
-                        if (widget.exitOnMaxAttempts) {
-                          // Exit app
-                          if (!kIsWeb) {
-                            exit(0);
-                          }
-                        }
+                        if (mounted) setState(() => _authFailed = true);
+                        if (widget.exitOnMaxAttempts && !kIsWeb) exit(0);
                       }
                       return SecureApplicationAuthenticationStatus.FAILED;
                     }
                   } catch (e) {
-                    // Handle error (e.g., log it)
                     debugPrint('Authentication error: $e');
                     _authAttempts++;
                     if (_authAttempts >= widget.maxAuthAttempts) {
-                      if (mounted) {
-                        setState(() {
-                          _authFailed = true;
-                        });
-                      }
-                      if (widget.exitOnMaxAttempts) {
-                        if (!kIsWeb) {
-                          exit(0);
-                        }
-                      }
+                      if (mounted) setState(() => _authFailed = true);
+                      if (widget.exitOnMaxAttempts && !kIsWeb) exit(0);
                     }
                     return SecureApplicationAuthenticationStatus.FAILED;
                   }
                 }
               : null,
           child: SecureGate(
-            blurr: widget
-                .blurAmount, // Note: parameter is intentionally spelled "blurr" in the package
+            blurr: widget.blurAmount,
             opacity: widget.opacity,
             lockedBuilder:
                 widget.lockedBuilder ??
@@ -218,13 +248,7 @@ class _PrivacyShieldState extends State<PrivacyShield> {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {
-                          if (widget.requireAuthOnResume) {
-                            controller?.unlock(); // Triggers onNeedUnlock
-                          } else {
-                            controller?.unlock();
-                          }
-                        },
+                        onPressed: () => controller?.unlock(),
                         child: Text(
                           widget.requireAuthOnResume
                               ? 'Authenticate'
@@ -243,7 +267,6 @@ class _PrivacyShieldState extends State<PrivacyShield> {
 
   @override
   void dispose() {
-    // Re-enable screenshots if needed (optional, depending on app requirements)
     if (widget.preventScreenshot) {
       _noScreenshot.screenshotOn();
     }
