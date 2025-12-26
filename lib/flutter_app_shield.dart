@@ -87,8 +87,7 @@ class AppShield extends StatefulWidget {
   final Widget Function(
     BuildContext context,
     SecureApplicationController? controller,
-  )?
-  lockedBuilder;
+  )? lockedBuilder;
 
   /// Whether to force-close the app after exceeding [maxAuthAttempts].
   ///
@@ -202,7 +201,7 @@ class _AppShieldState extends State<AppShield> {
                   try {
                     final bool authenticated = await _localAuth.authenticate(
                       localizedReason: 'Please authenticate to access the app',
-                      options: const AuthenticationOptions(
+                      options: const AuthenticateOptions(
                         stickyAuth: true,
                         biometricOnly: false,
                       ),
@@ -234,30 +233,27 @@ class _AppShieldState extends State<AppShield> {
           child: SecureGate(
             blurr: widget.blurAmount,
             opacity: widget.opacity,
-            lockedBuilder:
-                widget.lockedBuilder ??
+            lockedBuilder: widget.lockedBuilder ??
                 (context, controller) => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.lock, size: 80, color: Colors.white),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'App is locked',
-                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.lock, size: 80, color: Colors.white),
+                          const SizedBox(height: 20),
+                          const Text(
+                            'App is locked',
+                            style: TextStyle(color: Colors.white, fontSize: 24),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () => controller?.unlock(),
+                            child: Text(
+                              widget.requireAuthOnResume ? 'Authenticate' : 'Unlock',
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () => controller?.unlock(),
-                        child: Text(
-                          widget.requireAuthOnResume
-                              ? 'Authenticate'
-                              : 'Unlock',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
             child: widget.child,
           ),
         );

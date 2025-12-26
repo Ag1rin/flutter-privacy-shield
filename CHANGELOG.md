@@ -1,40 +1,42 @@
-## Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
-- No unreleased changes yet. Add future changes here.
-
-## [0.1.0] - 2025-12-26
+## [0.1.3] 
 
 ### Added
-- Initial release of the Flutter Privacy Shield package.
-- Core features: Screenshot and screen recording prevention using `no_screenshot`.
-- Background blur and app locking with `secure_application`.
-- Optional biometric/PIN authentication on app resume via `local_auth`.
-- Root/jailbreak detection and blocking using `flutter_jailbreak_detection`.
-- Customizable parameters: `blurAmount`, `opacity`, `preventScreenshot`, `requireAuthOnResume`, `blockOnJailbreak`, `maxAuthAttempts`, `exitOnMaxAttempts`, and `maxAttemptsMessage`.
-- Custom builders for compromised device screen (`compromisedDeviceBuilder`) and locked screen (`lockedBuilder`).
-- Cross-platform support for iOS and Android.
-- Error handling for authentication failures, with optional app exit.
-- Initial documentation in README.md.
-
-### Fixed
-- N/A (initial release).
+- Full DartDoc documentation for all public APIs (including class, constructor, and parameters)
+- Comprehensive example app in `example/` folder demonstrating all features
 
 ### Changed
-- N/A (initial release).
+- Renamed main widget from `PrivacyShield` to `AppShield` for better alignment with package name
+- Updated all dependencies to their latest stable versions:
+  - `secure_application` to latest
+  - `no_screenshot` to latest
+  - `flutter_jailbreak_detection` to latest
+  - `local_auth` to latest
 
-### Deprecated
-- N/A (initial release).
+### Fixed
+- Minor code cleanups and improvements for better readability and performance
 
-### Removed
-- N/A (initial release).
+## [0.1.2] 
 
-### Security
-- Added checks to prevent app from running on compromised devices.
-- Implemented authentication attempt limits to mitigate brute-force attacks.
+### Added
+- Added runnable `example/` folder with a complete demo app
+
+### Changed
+- Major README improvements: better formatting, clearer installation/usage instructions, customization examples, and testing tips
+
+## [0.1.1] 
+
+### Changed
+- Updated README with detailed usage, features, and configuration examples
+- Improved documentation and structure for better user experience
+
+## [0.1.0] 
+
+### Added
+- Initial release
+- Core features:
+  - Screenshot and screen recording prevention
+  - Background blur in app switcher
+  - Optional biometric/PIN authentication on resume
+  - Optional block on rooted/jailbroken devices
+  - Customizable lock and compromised device screens
+  - Max authentication attempts with optional app exit
