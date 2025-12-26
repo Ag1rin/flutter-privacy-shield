@@ -15,14 +15,6 @@
 
 <div align="center">
 
-### Demo Screenshots
-
-
-
-
-**Screenshot Prevention** – Android shows a black screen when trying to capture
-(assets/black_screen.png)
-
 </div>
 
 ---
