@@ -1,6 +1,6 @@
 name: flutter_app_shield
 description: "A simple Flutter package that prevents screenshots, blocks screen recording, and blurs sensitive content in background or app switcher."
-version: 0.1.1
+version: 0.1.2
 homepage: https://github.com/Ag1rin/flutter-privacy-shield
 
 environment:
